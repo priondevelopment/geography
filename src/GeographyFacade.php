@@ -1,6 +1,6 @@
 <?php
 
-namespace PrionGeography;
+namespace Geography;
 
 /**
  * This file is part of Laratrust,

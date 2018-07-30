@@ -1,11 +1,12 @@
 {
-    "name": "prion-development/settings",
+    "name": "prion-development/geography",
     "description": "Create and Manage Settings.",
+    "keywords": ["geography","states","countries"],
     "license": "MIT",
-    "homepage": "https://priondevelopment.com/packages/settings",
+    "homepage": "https://priondevelopment.com/packages/geography",
     "support": {
-        "issues": "https://github.com/prion-development/settings/issues",
-        "source": "https://github.com/prion-development/settings"
+        "issues": "https://github.com/prion-development/geography/issues",
+        "source": "https://github.com/prion-development/geography"
     },
     "authors": [
         {
@@ -14,20 +15,32 @@
         }
     ],
     "require": {
-        "php": "^7.1.1"
+        "php": "^7.1.1",
+        "illuminate/cache": "~5.2"
     },
     "autoload": {
         "psr-4": {
-            "PrionSettings\\": "src/"
+            "Geography\\": "src/"
         }
     },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
+    "autoload-dev": {
+        "psr-4": {
+            "Geography\\Tests\\": "tests/"
         }
     },
     "config": {
         "sort-packages": true
     },
-    "minimum-stability": "dev"
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Geography\\GeographyServiceProvider"
+            ],
+            "aliases": {
+                "Geography": "Geography\\GeographyFacade"
+            }
+        }
+    }
 }

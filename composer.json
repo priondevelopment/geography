@@ -1,0 +1,33 @@
+{
+    "name": "prion-development/settings",
+    "description": "Create and Manage Settings.",
+    "license": "MIT",
+    "homepage": "https://priondevelopment.com/packages/settings",
+    "support": {
+        "issues": "https://github.com/prion-development/settings/issues",
+        "source": "https://github.com/prion-development/settings"
+    },
+    "authors": [
+        {
+            "name": "Brandon Best",
+            "email": "brandonbest@priondevelopment.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "PrionSettings\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev"
+}

@@ -47,6 +47,7 @@ class GeographyServiceProvider extends ServiceProvider
         ], 'geography');
     }
 
+
     /**
      * Register the service provider.
      *
@@ -55,7 +56,41 @@ class GeographyServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerGeography();
+
         $this->mergeConfig();
+    }
+
+
+    /**
+     * Register the application bindings.
+     *
+     * @return void
+     */
+    private function registerLaratrust()
+    {
+        $this->app->bind('geography', function ($app) {
+            return new Geography\Geography($app);
+        });
+
+        $this->app->alias('geography', 'Geography\Geography');
+    }
+
+
+    /**
+     * Merges user's and laratrust's configs.
+     *
+     * @return void
+     */
+    private function mergeConfig()
+    {
+        $this->mergeConfigFrom(
+            __DIR__.'/config/geography/us.php',
+            'geography'
+        );
+        $this->mergeConfigFrom(
+            __DIR__.'/config/geography/ca.php',
+            'geography'
+        );
     }
 
 

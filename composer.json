@@ -1,12 +1,12 @@
 {
-    "name": "prion-development/geography",
+    "name": "priondevelopment/geography",
     "description": "Create and Manage Settings.",
     "keywords": ["geography","states","countries"],
     "license": "MIT",
     "homepage": "https://priondevelopment.com/packages/geography",
     "support": {
-        "issues": "https://github.com/prion-development/geography/issues",
-        "source": "https://github.com/prion-development/geography"
+        "issues": "https://github.com/priondevelopment/geography/issues",
+        "source": "https://github.com/priondevelopment/geography"
     },
     "authors": [
         {

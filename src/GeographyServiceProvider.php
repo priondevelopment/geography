@@ -1,5 +1,7 @@
 <?php
+
 namespace Geography;
+
 /**
  * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
@@ -7,8 +9,10 @@ namespace Geography;
  * @license MIT
  * @package Laratrust
  */
+
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+
 class GeographyServiceProvider extends ServiceProvider
 {
 
@@ -66,7 +70,7 @@ class GeographyServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    private function registerLaratrust()
+    private function registerGeography()
     {
         $this->app->bind('geography', function ($app) {
             return new Geography\Geography($app);
@@ -102,7 +106,7 @@ class GeographyServiceProvider extends ServiceProvider
     private function registerLaratrust()
     {
         $this->app->bind('geography', function ($app) {
-            return new Geography\Geography($app);
+            return new Geography($app);
         });
         $this->app->alias('geography', 'Geography\Geography');
     }

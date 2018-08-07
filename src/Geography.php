@@ -55,7 +55,7 @@ class Geography
 
         $this->countries = $this->cache->remember($cacheKey, $ttl, function () {
             $countries = [];
-            $all_data = $this->allData;
+            $all_data = $this->allData();
 
             foreach ($all_data as $code => $country) {
                 $countries[$code] = $country['name'];

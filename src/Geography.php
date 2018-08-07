@@ -2,6 +2,8 @@
 
 namespace Geography;
 
+use Exception;
+
 class Geography
 {
 
@@ -19,9 +21,19 @@ class Geography
      */
     protected $code;
 
+    /**
+     * Cache Settings
+     *
+     * @var
+     */
     protected $cache;
     protected $cacheTag = 'geography_cache';
 
+    /**
+     * All Countries Data
+     *
+     * @var
+     */
     protected $countries;
     protected $allData;
 
@@ -120,10 +132,39 @@ class Geography
         $allData = $this->all();
         $partitions = $allData['partitions'];
 
+        $this->exceptionPartitionType($type);
+        $this->exceptionPartitionTypeInvalid($partitions, $type);
+
         if ($type)
             return $partitions[$type];
 
         return $partitions;
+    }
+
+
+    /**
+     * Check if Partition Type is Defined
+     *
+     * @param $type
+     * @throws Exception
+     */
+    private function exceptionPartitionType($type)
+    {
+        if (!$type)
+            throw new Exception( "You must define a partition type for " . strtoupper($this->code) );
+    }
+
+
+    /**
+     * Check if Partition Type is Invalid
+     *
+     * @param $type
+     * @throws Exception
+     */
+    private function exceptionPartitionTypeInvalid($partitions, $type)
+    {
+        if (!isset($partitions[$type]))
+            throw new Exception( "'" . $type . "' is not defined for " . strtoupper($this->code) );
     }
 
 
@@ -135,6 +176,7 @@ class Geography
     public function partitionNames($type='')
     {
         $partitions = [];
+
         foreach ($this->partitions($type) as $p) {
             $partitions[$p['abbr']] = $p['name'];
         }
@@ -155,6 +197,11 @@ class Geography
     }
 
 
+    /**
+     * Pull the Actual Country Name
+     *
+     * @return mixed
+     */
     public function name()
     {
         $allData = $this->all();

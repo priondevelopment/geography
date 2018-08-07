@@ -3,11 +3,11 @@
 namespace Geography;
 
 /**
- * This file is part of Laratrust,
- * a role & permission management solution for Laravel.
+ * This file is part of Geography
  *
  * @license MIT
- * @package Laratrust
+ * @company Prion Development
+ * @package Geography
  */
 
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -21,7 +21,7 @@ class GeographyServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * The commands to be registered.
@@ -37,6 +37,17 @@ class GeographyServiceProvider extends ServiceProvider
      */
     protected $middlewares = [];
 
+    protected $cache;
+    protected $cacheTag = 'geography_cache';
+
+    public function __construct($app)
+    {
+        $this->app = $app;
+        $this->cache = app()->make('cache')
+            ->tags($this->cacheTag);
+    }
+
+
     /**
      * Bootstrap the application events.
      *
@@ -44,11 +55,16 @@ class GeographyServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $publishes = [];
+        $countries = $this->countryIso();
+
+        foreach ($countries as $country) {
+            $path = __DIR__ . '/config/geography/' . $country . '.php';
+            $publishes[$path] = config_path('geography/' . $country . '.php');
+        }
+
         // Register published configuration.
-        $this->publishes([
-            __DIR__.'/config/geography/us.php' => config_path('geography/us.php'),
-            __DIR__.'/config/geography/ca.php' => config_path('geography/ca.php'),
-        ], 'geography');
+        $this->publishes($publishes, 'geography');
     }
 
 
@@ -62,6 +78,20 @@ class GeographyServiceProvider extends ServiceProvider
         $this->registerGeography();
 
         $this->mergeConfig();
+//        $this->mergeConfigCountry();
+
+        $this->countriesCache();
+    }
+
+
+    /**
+     * Defer Loading Geography
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return ['geography'];
     }
 
 
@@ -73,59 +103,99 @@ class GeographyServiceProvider extends ServiceProvider
     private function registerGeography()
     {
         $this->app->bind('geography', function ($app) {
-            return new Geography\Geography($app);
-        });
-
-        $this->app->alias('geography', 'Geography\Geography');
-    }
-
-
-    /**
-     * Merges user's and laratrust's configs.
-     *
-     * @return void
-     */
-    private function mergeConfig()
-    {
-        $this->mergeConfigFrom(
-            __DIR__.'/config/geography/us.php',
-            'geography'
-        );
-        $this->mergeConfigFrom(
-            __DIR__.'/config/geography/ca.php',
-            'geography'
-        );
-    }
-
-
-    /**
-     * Register the application bindings.
-     *
-     * @return void
-     */
-    private function registerLaratrust()
-    {
-        $this->app->bind('geography', function ($app) {
             return new Geography($app);
         });
+
         $this->app->alias('geography', 'Geography\Geography');
     }
 
-
     /**
-     * Merges user's and laratrust's configs.
+     * Merges Geography Config Settings
      *
      * @return void
      */
     private function mergeConfig()
     {
+        $countries = $this->countryIso();
+
         $this->mergeConfigFrom(
-            __DIR__.'/config/geography/us.php',
+            __DIR__ . '/config/geography.php',
             'geography'
         );
-        $this->mergeConfigFrom(
-            __DIR__.'/config/geography/ca.php',
-            'geography'
-        );
+    }
+
+
+    /**
+     * Merges user's and geography's configs.
+     *
+     * @return void
+     */
+    private function mergeConfigCountry()
+    {
+        $countries = $this->countryIso();
+
+        foreach ($isos as $iso) {
+            $this->mergeConfigFrom(
+                __DIR__ . '/config/geography/' . $iso . '.php',
+                'geography.' . $iso
+            );
+        }
+    }
+
+
+    /**
+     * Place a List of Countries in the Cache
+     *
+     */
+    public function countriesCache()
+    {
+        if (!config('geography.use_cache')) {
+            return $this->allCountries();
+        }
+
+        $ttl = config('geography.cache_ttl', 60*24);
+        $cacheKey = 'country_all';
+
+        $this->cache->remember($cacheKey, $ttl, function () {
+            return $this->allCountries();
+        });
+    }
+
+
+    /**
+     * Pull All Country Data
+     *
+     * @return mixed
+     */
+    private function allCountries()
+    {
+        $countries = [];
+        $isos = $this->countryIso();
+        foreach ($isos as $iso) {
+            $path = __DIR__ . '/config/geography/' . $iso . '.php';
+            $countries[$iso] = require $path;
+        }
+
+        return $countries;
+    }
+
+
+    /**
+     * Find All File Names in Directory
+     *
+     */
+    private function countryIso()
+    {
+        $cacheKey = 'country_abbrs';
+        $ttl = config('geography.cache_ttl', 60*24);
+
+        return $this->cache->remember($cacheKey, $ttl, function () {
+            $countries = scandir(__DIR__.'/config/geography');
+            $countries = str_replace(".php", "", $countries);
+            unset($countries[0]);
+            unset($countries[1]);
+
+            return $countries;
+        });
     }
 }

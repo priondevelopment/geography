@@ -64,6 +64,7 @@ return [
         'states' => [
             'AL' => [
                 'name' => 'Alabama',
+                'abbr' => 'AL',
                 'region' => 'South',
             ],
         ],

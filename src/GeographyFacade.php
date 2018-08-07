@@ -3,11 +3,12 @@
 namespace Geography;
 
 /**
- * This file is part of Laratrust,
- * a role & permission management solution for Laravel.
+ * This file is part of Geography,
+ * geography data for Laravel.
  *
  * @license MIT
- * @package Laratrust
+ * @company Prion Development
+ * @package Geography
  */
 
 use Illuminate\Support\Facades\Facade;

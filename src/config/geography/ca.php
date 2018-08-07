@@ -14,6 +14,7 @@ return [
     'name_full' => 'Canada',
     'abbr' => 'CA',
     'continent' => 'North America',
+    'capital' => 'Ottawa',
 
 
     /*

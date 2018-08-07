@@ -14,6 +14,7 @@ return [
     'name_full' => 'United States of America',
     'continent' => 'North America',
     'abbr' => 'US',
+    'capital' => 'Washington DC',
 
 
     /*

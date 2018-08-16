@@ -67,8 +67,8 @@ return [
             'AC' => [
                 'name' => 'Acre',
                 'abbr' => 'AC',
-                'region' => 'Rio Branco',
-                'capital' => '',
+                'region' => '',
+                'capital' => 'Rio Branco',
             ],
             'AL' => [
                 'name' => 'Alagoas',

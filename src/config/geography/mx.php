@@ -49,7 +49,7 @@ return [
     'language' => 'Spanish',
     'languages' => [
         'Spanish',
-        'English',C
+        'English',
     ],
 
 

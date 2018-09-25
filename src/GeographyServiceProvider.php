@@ -60,7 +60,8 @@ class GeographyServiceProvider extends ServiceProvider
 
         foreach ($countries as $country) {
             $path = __DIR__ . '/config/geography/' . $country . '.php';
-            $publishes[$path] = config_path('geography/' . $country . '.php');
+            $app_path = app()->basePath('config/geography/' . $country . '.php');
+            $publishes[$path] = $app_path;
         }
 
         // Register published configuration.
@@ -78,7 +79,6 @@ class GeographyServiceProvider extends ServiceProvider
         $this->registerGeography();
 
         $this->mergeConfig();
-//        $this->mergeConfigCountry();
 
         $this->countriesCache();
     }
@@ -122,24 +122,6 @@ class GeographyServiceProvider extends ServiceProvider
             __DIR__ . '/config/geography.php',
             'geography'
         );
-    }
-
-
-    /**
-     * Merges user's and geography's configs.
-     *
-     * @return void
-     */
-    private function mergeConfigCountry()
-    {
-        $countries = $this->countryIso();
-
-        foreach ($isos as $iso) {
-            $this->mergeConfigFrom(
-                __DIR__ . '/config/geography/' . $iso . '.php',
-                'geography.' . $iso
-            );
-        }
     }
 
 

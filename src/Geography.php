@@ -62,7 +62,7 @@ class Geography
         if ($this->countries)
             return $this->countries;
 
-        $ttl = config('geography.cache_ttl', 60*24);
+        $ttl = config('priongeography.cache_ttl', 60*24);
         $cacheKey = 'country_list';
 
         $this->countries = $this->cache->remember($cacheKey, $ttl, function () {

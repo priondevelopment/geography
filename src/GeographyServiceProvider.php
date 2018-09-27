@@ -28,7 +28,9 @@ class GeographyServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected $commands = [];
+    protected $commands = [
+        'Config' => 'command.geography.config',
+    ];
 
     /**
      * The middlewares to be registered.
@@ -78,6 +80,8 @@ class GeographyServiceProvider extends ServiceProvider
     {
         $this->registerGeography();
 
+        $this->registerCommands();
+
         $this->mergeConfig();
 
         $this->countriesCache();
@@ -117,10 +121,11 @@ class GeographyServiceProvider extends ServiceProvider
     private function mergeConfig()
     {
         $countries = $this->countryIso();
+        $this->app->configure('priongeography');
 
         $this->mergeConfigFrom(
-            __DIR__ . '/config/geography.php',
-            'geography'
+            __DIR__ . '/config/priongeography.php',
+            'priongeography'
         );
     }
 
@@ -131,11 +136,11 @@ class GeographyServiceProvider extends ServiceProvider
      */
     public function countriesCache()
     {
-        if (!config('geography.use_cache')) {
+        if (!config('priongeography.use_cache')) {
             return $this->allCountries();
         }
 
-        $ttl = config('geography.cache_ttl', 60*24);
+        $ttl = config('priongeography.cache_ttl', 60*24);
         $cacheKey = 'country_all';
 
         $this->cache->remember($cacheKey, $ttl, function () {
@@ -169,7 +174,7 @@ class GeographyServiceProvider extends ServiceProvider
     private function countryIso()
     {
         $cacheKey = 'country_abbrs';
-        $ttl = config('geography.cache_ttl', 60*24);
+        $ttl = config('priongeography.cache_ttl', 60*24);
 
         return $this->cache->remember($cacheKey, $ttl, function () {
             $countries = scandir(__DIR__.'/config/geography');
@@ -180,4 +185,35 @@ class GeographyServiceProvider extends ServiceProvider
             return $countries;
         });
     }
+
+
+    /**
+     * Register the given commands.
+     *
+     * @return void
+     */
+    protected function registerCommands()
+    {
+        foreach (array_keys($this->commands) as $command) {
+            $method = "register{$command}Command";
+
+            call_user_func_array([$this, $method], []);
+        }
+
+        $this->commands(array_values($this->commands));
+    }
+
+
+    /**
+     * Bind the Error Config Setup Command
+     *
+     */
+    protected function registerConfigCommand()
+    {
+        $command = $this->commands['Config'];
+        $this->app->singleton($command, function () {
+            return new \Geography\Commands\ConfigCommand;
+        });
+    }
+
 }
